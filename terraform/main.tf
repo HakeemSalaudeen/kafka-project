@@ -24,9 +24,9 @@ resource "confluent_kafka_topic" "faker-events-topic" {
   kafka_cluster {
     id = confluent_kafka_cluster.kafka-cluster.id
   }
-  topic_name         = "faker-events-topic"
-  rest_endpoint      = confluent_kafka_cluster.kafka-cluster.rest_endpoint
-  partitions_count  = 3
+  topic_name       = "faker-events-topic"
+  rest_endpoint    = confluent_kafka_cluster.kafka-cluster.rest_endpoint
+  partitions_count = 3
   credentials {
     key    = confluent_api_key.kafka_api_key.id
     secret = confluent_api_key.kafka_api_key.secret
