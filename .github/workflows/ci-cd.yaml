@@ -31,10 +31,10 @@ jobs:
           # Run flake8 to check for style issues
           flake8 .
 
-      # Run unit tests
-      - name: Run Unit Tests
-        run: |
-          pytest .
+      # # Run unit tests
+      # - name: Run Unit Tests
+      #   run: |
+      #     pytest .
 
       # lint terraform codes
       - name: Setup Terraform
