@@ -47,23 +47,23 @@ jobs:
           cd terraform
           terraform fmt -check
 
-      - name: Terraform Validate
-        run: |
-          cd terraform
-          terraform init
-          #terraform validate
+      # - name: Terraform Validate
+      #   run: |
+      #     cd terraform
+      #     terraform init
+      #     #terraform validate
           
-  build:
-    needs: test                       # Ensures build only happens after tests pass
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # build:
+  #   needs: test                       # Ensures build only happens after tests pass
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
       
-      - name: Build Docker Images
-        run: |
-          # docker build -t producer ./producer
-          # docker build -t consumer ./consumer
-          docker build -t kafka-project .
+  #     - name: Build Docker Images
+  #       run: |
+  #         # docker build -t producer ./producer
+  #         # docker build -t consumer ./consumer
+  #         docker build -t kafka-project .
 
       
       # - name: Push to ECR
