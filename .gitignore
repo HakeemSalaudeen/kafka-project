@@ -4,3 +4,5 @@
 # Local state file
 .terraform/
 .terraform.lock.hcl
+variable.tf 
+terraform.tfvars
