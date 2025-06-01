@@ -1,10 +1,10 @@
-terraform { 
-  cloud { 
-    
-    organization = "kafka_project" 
+terraform {
+  cloud {
 
-    workspaces { 
-      name = "kafka-project" 
-    } 
-  } 
+    organization = "kafka_project"
+
+    workspaces {
+      name = "kafka-project"
+    }
+  }
 }
