@@ -21,9 +21,9 @@ resource "confluent_kafka_cluster" "kafka-cluster" {
 # Create a Confluent Kafka Topic
 # This topic will be used to produce and consume messages
 resource "confluent_kafka_topic" "faker-events-topic" {
-  depends_on = [ confluent_api_key.kafka_api_key,
-                  confluent_service_account.faker-events-app-manager,
-                  confluent_kafka_acl.allow-create-topic ]
+  depends_on = [confluent_api_key.kafka_api_key,
+    confluent_service_account.faker-events-app-manager,
+  confluent_kafka_acl.allow-create-topic]
   kafka_cluster {
     id = confluent_kafka_cluster.kafka-cluster.id
   }
