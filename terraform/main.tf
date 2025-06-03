@@ -44,7 +44,7 @@ resource "confluent_api_key" "kafka_api_key" {
     kind        = confluent_service_account.kafka-sa.kind
   }
 
- managed_resource {
+  managed_resource {
     id          = confluent_kafka_cluster.kafka-cluster.id
     api_version = confluent_kafka_cluster.kafka-cluster.api_version
     kind        = confluent_kafka_cluster.kafka-cluster.kind
