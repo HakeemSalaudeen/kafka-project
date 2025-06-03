@@ -17,6 +17,8 @@ provider "confluent" {
   cloud_api_secret = var.confluent_cloud_api_secret
 }
 
+# Configure the AWS provider
+# This provider is used to manage AWS resources, such as the Kafka cluster
 provider "aws" {
 
   region = "eu-central-1"

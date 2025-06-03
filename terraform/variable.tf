@@ -39,3 +39,8 @@ variable "partitions" {
   default     = 1
   description = "Number of partitions for the topic"
 }
+
+# variable "kafka_rest_endpoint" {
+#   description = "Kafka REST endpoint"
+#   type        = string
+# }

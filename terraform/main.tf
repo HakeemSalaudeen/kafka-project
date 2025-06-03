@@ -21,6 +21,9 @@ resource "confluent_kafka_cluster" "kafka-cluster" {
 # Create a Confluent Kafka Topic
 # This topic will be used to produce and consume messages
 resource "confluent_kafka_topic" "faker-events-topic" {
+  depends_on = [ confluent_api_key.kafka_api_key,
+                  confluent_service_account.faker-events-app-manager,
+                  confluent_kafka_acl.allow-create-topic ]
   kafka_cluster {
     id = confluent_kafka_cluster.kafka-cluster.id
   }
@@ -28,8 +31,8 @@ resource "confluent_kafka_topic" "faker-events-topic" {
   rest_endpoint    = confluent_kafka_cluster.kafka-cluster.rest_endpoint
   partitions_count = var.partitions
   credentials {
-    key    = var.confluent_cloud_api_key
-    secret = var.confluent_cloud_api_secret
+    key    = confluent_api_key.kafka_api_key.id
+    secret = confluent_api_key.kafka_api_key.secret
   }
 }
 
@@ -39,9 +42,9 @@ resource "confluent_kafka_topic" "faker-events-topic" {
 resource "confluent_api_key" "kafka_api_key" {
   display_name = "faker-events-api-key"
   owner {
-    id          = confluent_service_account.kafka-sa.id
-    api_version = confluent_service_account.kafka-sa.api_version
-    kind        = confluent_service_account.kafka-sa.kind
+    id          = confluent_service_account.faker-events-app-manager.id
+    api_version = confluent_service_account.faker-events-app-manager.api_version
+    kind        = confluent_service_account.faker-events-app-manager.kind
   }
 
   managed_resource {
@@ -57,7 +60,22 @@ resource "confluent_api_key" "kafka_api_key" {
 
 # Create a Confluent Service Account
 # This service account will be used to manage the Kafka cluster and API keys
-resource "confluent_service_account" "kafka-sa" {
-  display_name = "faker-events-sa"
-  description  = "Service Account for faker-events"
+resource "confluent_service_account" "faker-events-app-manager" {
+  display_name = "faker-events-app-manager"
+  description  = "Service Account for faker-events cluster"
+}
+
+
+resource "confluent_kafka_acl" "allow-create-topic" {
+  kafka_cluster {
+    id = confluent_kafka_cluster.kafka-cluster.id
+  }
+  resource_type = "TOPIC"
+  resource_name = var.kafka_topic_name
+  rest_endpoint = confluent_kafka_cluster.kafka-cluster.rest_endpoint
+  pattern_type  = "LITERAL"
+  principal     = "User:${confluent_service_account.faker-events-app-manager.id}"
+  host          = "*"
+  operation     = "CREATE"
+  permission    = "ALLOW"
 }
