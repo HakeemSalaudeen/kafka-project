@@ -27,7 +27,7 @@ resource "confluent_kafka_cluster" "kafka-cluster" {
 resource "confluent_kafka_topic" "faker-events-topic" {
   depends_on = [confluent_api_key.cluster_api_key,
     confluent_service_account.kafka-cluster-app-manager
-    ,confluent_role_binding.app-manager-kafka-cluster-admin
+    , confluent_role_binding.app-manager-kafka-cluster-admin
   ]
   kafka_cluster {
     id = confluent_kafka_cluster.kafka-cluster.id
@@ -48,7 +48,7 @@ resource "confluent_api_key" "cluster_api_key" {
   display_name = "cluster-events-api-key"
   owner {
     id          = confluent_service_account.kafka-cluster-app-manager.id
-    api_version = confluent_service_account.kafka-cluster-app-manager.api_version 
+    api_version = confluent_service_account.kafka-cluster-app-manager.api_version
     kind        = confluent_service_account.kafka-cluster-app-manager.kind
   }
 
