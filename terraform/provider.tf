@@ -13,8 +13,8 @@ terraform {
 
 provider "confluent" {
   # Configuration options
-  cloud_api_key    = var.confluent_cloud_api_key
-  cloud_api_secret = var.confluent_cloud_api_secret
+  cloud_api_key    = aws_ssm_parameter.confluent_cloud_api_key.value
+  cloud_api_secret = aws_ssm_parameter.confluent_cloud_api_secret.value
 }
 
 # Configure the AWS provider

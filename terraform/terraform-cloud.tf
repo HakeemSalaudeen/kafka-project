@@ -4,7 +4,7 @@ terraform {
     organization = "kafka_project"
 
     workspaces {
-      name = "kafka-project"
+      name = "kafka_project"
     }
   }
 }
