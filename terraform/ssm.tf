@@ -32,4 +32,11 @@ resource "aws_ssm_parameter" "confluent_cluster_api_key" {
   # overwrite = true
 }
 
+resource "aws_ssm_parameter" "kafka_bootstrap_servers" {
+  name        = "/kafka/confluent_bootstrap_servers"
+  type        = "String"
+  value       = confluent_kafka_cluster.kafka-cluster.bootstrap_endpoint
+  description = "Kafka bootstrap servers"
+  #overwrite   = true
+}
 
