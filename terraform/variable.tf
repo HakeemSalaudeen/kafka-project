@@ -44,3 +44,8 @@ variable "partitions" {
 #   description = "Kafka REST endpoint"
 #   type        = string
 # }
+
+variable "s3_bucket_name" {
+  default = "kafka-faker-events-bucket-demo"
+}
+
