@@ -10,7 +10,7 @@ faker = Faker()
 
 # Fetch secrets
 def get_kafka_creds():
-    ssm = boto3.client("ssm", region_name="eu-west-2")
+    ssm = boto3.client("ssm", region_name="eu-central-1")
     api_key = ssm.get_parameter(
         Name="/kafka/confluent_cloud_api_key",
         WithDecryption=True
