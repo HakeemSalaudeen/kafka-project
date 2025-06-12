@@ -7,4 +7,5 @@
 terraform.tfvars
 terraform.tfvars
 config.properties
+.flake8
 

@@ -3,7 +3,7 @@ import boto3
 from faker import Faker
 from confluent_kafka import Producer
 from datetime import datetime
-import uuid
+import uuid                 # Importing uuid for unique event IDs
 
 faker = Faker()
 
@@ -30,13 +30,17 @@ def delivery_report(err, msg):
     """
     Called once for each message produced to indicate delivery result
     :param err: Error, if any. None if successful.
-    :param msg: Message instance (provides topic, partition, offset)
-    """
+    :param msg: provide information about the original message that failed.
+
+    msg.topic(): The name of the Kafka topic the message was sent to.
+    msg.partition(): specific partition within that topic where the message was delivered
+    msg.offset(): The offset of the message within that partition, A unique identifier for the message
+        """
     if err is not None:
-        print(f"Delivery failed: {err}")
+        print(f"Message delivery failed to topic: {err}")
     else:
         print(
-            f"Message delivered to {msg.topic()} [{msg.partition()}] "
+            f"Message delivered to {msg.topic()}, [{msg.partition()}] "
             f"at offset {msg.offset()}"
         )
 
@@ -54,11 +58,12 @@ conf = {
 producer = Producer(conf)
 topic = "faker-events"
 
-while True:
+while True:                                                             # Infinite loop to continuously produce events
     event = {
-        "id": str(uuid.uuid4()),
-        "name": faker.name(),
-        "timestamp": datetime.utcnow().isoformat()
+        "id": str(uuid.uuid4()),                                        # Generate a unique ID for each event, converts it to a string
+        "name": faker.name(),                                           # Generate a random name with Faker
+        "email": faker.email(),                                         # Generate a random email with Faker
+        "timestamp": datetime.utcnow().isoformat()                      # generate the current UTC timestamp
     }
     producer.produce(
         topic,
@@ -66,5 +71,6 @@ while True:
         value=str(event),
         callback=delivery_report
     )
-    producer.flush()
-    time.sleep(2)
+    producer.flush()                                                     # Ensure all messages are sent before continuing
+    time.sleep(5)                                                        # Sleep for 5 seconds before producing the next event
+    print(f"Produced event: {event}")                                    # Print the produced event for debugging
