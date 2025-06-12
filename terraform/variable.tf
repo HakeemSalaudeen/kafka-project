@@ -36,7 +36,7 @@ variable "kafka_topic_name" {
 
 variable "partitions" {
   type        = number
-  default     = 1
+  default     = 3
   description = "Number of partitions for the topic"
 }
 
