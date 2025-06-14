@@ -6,7 +6,10 @@
 .terraform.lock.hcl
 terraform.tfvars
 terraform.tfvars
-config.properties
-producer/producer-comment.py 
+config.properties 
 .flake8
+producer-comment.py
+
+
+
 
