@@ -4,6 +4,7 @@ from faker import Faker
 from confluent_kafka import Producer
 from datetime import datetime
 import uuid
+import json
 
 faker = Faker()
 
@@ -52,21 +53,29 @@ conf = {
 }
 
 producer = Producer(conf)
-topic = "faker-events"
+topic = "faker-events-topic"
 
-while True:
-    event = {
-        "id": str(uuid.uuid4()),
-        "name": faker.name(),
-        "email": faker.email(),
-        "timestamp": datetime.utcnow().isoformat()
-    }
-    producer.produce(
-        topic,
-        key=event["id"],
-        value=str(event),
-        callback=delivery_report
-    )
+try:
+    while True:
+        event = {
+            "id": str(uuid.uuid4()),
+            "name": faker.name(),
+            "email": faker.email(),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        producer.produce(
+            topic,
+            key=event["id"],
+            value=json.dumps(event),
+            callback=delivery_report
+        )
+        print(f"Produced event: {event}")
+        time.sleep(5)
+except KeyboardInterrupt:
+    print("Producer interrupted by user.")
+except Exception as e:
+    print(f"An error occurred: {e}")
+finally:
     producer.flush()
-    time.sleep(5)
-    print(f"Produced event: {event}")
+    print("Producer has been flushed and is exiting.")
+    print("Exiting producer.")

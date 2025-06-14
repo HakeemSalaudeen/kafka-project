@@ -9,6 +9,7 @@ terraform.tfvars
 config.properties 
 .flake8
 producer-comment.py
+consumer-comment.py
 
 
 

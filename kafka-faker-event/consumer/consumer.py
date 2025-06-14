@@ -2,6 +2,7 @@ import boto3
 from confluent_kafka import Consumer
 from datetime import datetime
 import uuid
+import json
 
 
 # Fetch secrets
@@ -35,24 +36,34 @@ conf = {
 }
 
 consumer = Consumer(conf)
-consumer.subscribe(['faker-events'])
+consumer.subscribe(['faker-events-topic'])
 
 s3 = boto3.client('s3')
 bucket_name = 'kafka-faker-events-bucket-demo'
 
-while True:
-    msg = consumer.poll(1.0)
-    if msg is None:
-        continue
-    if msg.error():
-        print(f"Consumer error: {msg.error()}")
-        continue
+try:
+    while True:
+        msg = consumer.poll(1.0)
+        if msg is None:
+            continue
+        if msg.error():
+            print(f"Consumer error: {msg.error()}")
+            continue
 
-    event = msg.value().decode('utf-8')
-    key = (
-        f"events/{datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')}_"
-        f"{uuid.uuid4()}.json"
-    )
-    s3.put_object(Bucket=bucket_name, Key=key, Body=event)
-
-    print(f"Uploaded to S3: {key}")
+        event = msg.value().decode('utf-8')
+        try:
+            json.loads(event)  # Validate JSON message
+        except json.JSONDecodeError:
+            print("Received non-JSON event, skipping.")
+            continue
+        key = (
+            f"events/{datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')}_"
+            f"{uuid.uuid4()}.json"
+        )
+        s3.put_object(Bucket=bucket_name, Key=key, Body=event)
+        print(f"Uploaded to S3: {key}")
+except KeyboardInterrupt:
+    print("Consumer interrupted by user.")
+finally:
+    consumer.close()
+    print("Consumer closed.")
