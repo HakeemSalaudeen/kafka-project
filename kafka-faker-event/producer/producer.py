@@ -13,15 +13,15 @@ faker = Faker()
 def get_kafka_creds():
     ssm = boto3.client("ssm", region_name="eu-central-1")
     api_key = ssm.get_parameter(
-        Name="/kafka/confluent_cloud_api_key",
+        Name="/kafka/confluent_cluster_api_key",
         WithDecryption=True
     )['Parameter']['Value']
     api_secret = ssm.get_parameter(
-        Name="/kafka/confluent_cloud_api_secret",
+        Name="/kafka/confluent_cluster_api_secret",
         WithDecryption=True
     )['Parameter']['Value']
     bootstrap_servers = ssm.get_parameter(
-        Name="/kafka/confluent_cloud_bootstrap_servers",
+        Name="/kafka/confluent_bootstrap_servers",
         WithDecryption=True
     )['Parameter']['Value']
     return api_key, api_secret, bootstrap_servers

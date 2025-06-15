@@ -10,6 +10,10 @@ config.properties
 .flake8
 producer-comment.py
 consumer-comment.py
+kafka-env 
+consumer-comment.py
+
+
 
 
 
