@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  test-codes:
     runs-on: ubuntu-latest
     steps:
           # Checks out the repository code
@@ -31,11 +31,6 @@ jobs:
           # Run flake8 to check for style issues
           flake8 .
 
-      # # Run unit tests
-      # - name: Run Unit Tests
-      #   run: |
-      #     pytest .
-
       # lint terraform codes
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -47,12 +42,32 @@ jobs:
           cd terraform
           terraform fmt -check
 
-      # - name: Terraform Validate
-      #   run: |
-      #     cd terraform
-      #     terraform init
-      #     #terraform validate
-          
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Producer Image
+        run: |
+          docker build -t kafka-producer ./producer
+          docker tag kafka-producer:latest ${{ secrets.DOCKER_USERNAME }}/kafka-producer:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/kafka-producer:latest
+
+      - name: Build Consumer Image
+        run: |
+          docker build -t kafka-consumer ./consumer
+          docker tag kafka-consumer:latest ${{ secrets.DOCKER_USERNAME }}/kafka-consumer:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/kafka-consumer:latest
+
+
   # build:
   #   needs: test                       # Ensures build only happens after tests pass
   #   runs-on: ubuntu-latest
