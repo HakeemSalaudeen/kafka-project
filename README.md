@@ -1,6 +1,16 @@
 # Kafka Project
 
-A production-ready event streaming pipeline using Confluent Cloud Kafka, Python, Docker, Kubernetes, and AWS. This project demonstrates how to generate synthetic events, stream them to Kafka, consume and process them, and store results in AWS S3. Infrastructure is provisioned with Terraform, and CI/CD is managed via GitHub Actions.
+A production-ready event streaming pipeline using Confluent Cloud Kafka, Python, Docker, Kubernetes, and AWS. 
+
+This project demonstrates how to generate synthetic events,stream them to Kafka, consume and process them, and store results in AWS S3 bucket. Infrastructure is provisioned with Terraform, and CI/CD is managed via GitHub Actions using:
+
+- Python producer (generates fake events using Faker)
+- Python consumer (reads from Kafka, writes to AWS S3)
+- Kafka cluster hosted on Confluent Cloud
+- Secrets managed in AWS SSM Parameter Store
+- Dockerized apps deployed to Docker hub and Kubernetes (Minikube)
+- CI/CD with GitHub Actions
+- Infrastructure provisioned with Terraform
 
 ---
 
@@ -21,17 +31,14 @@ A production-ready event streaming pipeline using Confluent Cloud Kafka, Python,
 - [Testing & Linting](#testing--linting)
 - [Best Practices](#best-practices)
 - [Troubleshooting](#troubleshooting)
-- [License](#license)
+- [References](#references)
 
 ---
 
 ## Architecture Overview
 
-```mermaid
-graph TD
-    A[Faker Producer (Python)] -->|Kafka Events| B[Confluent Cloud Kafka Topic]
-    B -->|Kafka Events| C[Consumer (Python)]
-    C -->|Processed Events| D[AWS S3 Bucket]
+```
+[Faker Producer (Python)] --> [Confluent Cloud Kafka Topic] --> [Consumer (Python)] --> [AWS S3 Bucket]
 ```
 
 - **Producer**: Generates synthetic events using Faker and streams them to a Kafka topic.
@@ -58,10 +65,9 @@ graph TD
 
 ## Tech Stack
 
-- **Python**
-- **Confluent Kafka (confluent-kafka)**
-- **Faker libary**
-- **Boto3 (AWS SDK)**
+- **Python (Faker, Boto3)**
+- **Apache Kafka (confluent-kafka)**
+- **AWS S3, SSM**
 - **Docker**
 - **Kubernetes**
 - **Terraform**
@@ -133,14 +139,20 @@ docker build -t my-kafka-consumer ./kafka-faker-event/consumer
 1. **Create AWS credentials secret:**
    ```sh
    kubectl create secret generic aws-credentials \
-     --from-literal=AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxxxxx \
-     --from-literal=AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxx \
-     --from-literal=AWS_REGION=xxxxxx
+     --from-literal=AWS_ACCESS_KEY_ID=xxx \
+     --from-literal=AWS_SECRET_ACCESS_KEY=xxx \
+     --from-literal=AWS_REGION=xxx
    ```
 2. **Deploy Producer and Consumer:**
    ```sh
    kubectl apply -f kubernetes/producer/producer-deployment.yml
    kubectl apply -f kubernetes/consumer/consumer-deployment.yml
+   ```
+3. **Verify:**
+   ```sh
+   kubectl get pods
+   kubectl logs deployment/kafka-consumer
+   kubectl logs deployment/kafka-producer
    ```
 
 ### Secrets Management
@@ -168,6 +180,14 @@ event = {
     "email": faker.email(),
     "timestamp": datetime.utcnow().isoformat()
 }
+
+{
+  "event_id": "cd0123ff-7fa1-4988-b47c-12345678",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "timestamp": "2025-06-11T08:30:00Z"
+}
+
 producer.produce(
     topic,
     key=event["id"],
@@ -221,10 +241,10 @@ s3.put_object(Bucket=bucket_name, Key=key, Body=event)
 
 ---
 
-## Testing & Linting
+## Checks & Linting
 
-- **Testing:** Use `pytest` for unit tests.
-- **Linting:** Use `flake8` for code style checks.
+- **Terraform Checks:** Use `terraform fmt` for standard terraform formats.
+- **Python Linting:** Use `flake8` for code style checks.
 
 
 ---
@@ -240,7 +260,7 @@ s3.put_object(Bucket=bucket_name, Key=key, Body=event)
 
 ---
 
-## Troubleshooting
+## Troubleshooting Practices
 
 - **SASL Authentication Error:**  
   Ensure you are using the correct Confluent Cluster API key/secret from SSM. Double-check parameter names and values.
