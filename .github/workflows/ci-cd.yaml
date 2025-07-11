@@ -43,6 +43,7 @@ jobs:
           terraform fmt -check
 
   build-and-push:
+    needs: test-codes  # Ensures build only happens after tests pass
     runs-on: ubuntu-latest
 
     env:
@@ -57,13 +58,13 @@ jobs:
 
       - name: Build Producer Image
         run: |
-          docker build -t kafka-producer ./producer
+          docker build -t kafka-producer ./kafka-faker-event/producer
           docker tag kafka-producer:latest ${{ secrets.DOCKER_USERNAME }}/kafka-producer:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/kafka-producer:latest
 
       - name: Build Consumer Image
         run: |
-          docker build -t kafka-consumer ./consumer
+          docker build -t kafka-consumer ./kafka-faker-event/consumer
           docker tag kafka-consumer:latest ${{ secrets.DOCKER_USERNAME }}/kafka-consumer:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/kafka-consumer:latest
 
