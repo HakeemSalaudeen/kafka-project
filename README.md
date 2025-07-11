@@ -41,14 +41,6 @@ This project demonstrates how to generate synthetic events,stream them to Kafka,
 [Faker Producer (Python)] --> [Confluent Cloud Kafka Topic] --> [Consumer (Python)] --> [AWS S3 Bucket]
 ```
 
-Here is a simple flow chart:
-
-```mermaid
-graph TD;
-    [Faker Producer (Python)]-->[Confluent Cloud Kafka Topic]-->[Faker Consumer (Python)]--> [AWS S3 Bucket];
-```
-
-
 - **Producer**: Generates synthetic events using Faker and streams them to a Kafka topic.
 - **Kafka**: Managed by Confluent Cloud, provisioned via Terraform.
 - **Consumer**: Reads events from Kafka, validates, and uploads them to AWS S3.
